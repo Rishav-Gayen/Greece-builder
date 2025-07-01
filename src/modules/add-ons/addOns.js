@@ -44,8 +44,8 @@ export const renderAddOnsForm = () => {
         </div>
         
         <div class="form-actions">
-          <button type="submit" class="btn-primary">
-            <i class="fas fa-arrow-right"></i> Continue to Summary
+          <button type="submit" class="btn-primary" id="continue-summary">
+            Continue to Summary
           </button>
         </div>
       </form>
@@ -106,30 +106,56 @@ const showFinalCompletion = () => {
   Swal.fire({
     title: 'Trip Summary',
     html: tripSummaryHtml,
+    customClass: {
+      popup: 'trip-summary-modal',
+      title: 'trip-summary-title',
+      confirmButton: 'trip-summary-confirm',
+      cancelButton: 'trip-summary-cancel',
+      closeButton: 'swal2-close-hide'  // Hide close button
+    },
     showCancelButton: true,
+    showConfirmButton: true,
     confirmButtonText: 'Continue to Customer Details',
-    cancelButtonText: 'Cancel'
+    cancelButtonText: 'Cancel',
+    showCloseButton: false,  // Explicitly hide close button
+    allowOutsideClick: false,  // Prevent closing by clicking outside
+    allowEscapeKey: false,    // Prevent closing with ESC key
+    backdrop: 'static'        // Prevent closing when clicking backdrop
   }).then((result) => {
     if (result.isConfirmed) {
       // Show customer details form
       Swal.fire({
         title: 'Customer Details',
         html: `
-          <form id="customer-details-form">
+          <form id="customer-details-form" class="customer-details-form">
             <div class="form-group">
-              <label for="customer-name">Name:</label>
-              <input type="text" id="customer-name" name="name" required>
+              <label for="customer-name">Full Name</label>
+              <input type="text" id="customer-name" name="name" required 
+                     placeholder="John Doe" minlength="2" maxlength="50">
             </div>
             <div class="form-group">
-              <label for="customer-email">Email:</label>
-              <input type="email" id="customer-email" name="email" required>
+              <label for="customer-email">Email Address</label>
+              <input type="email" id="customer-email" name="email" required
+                     placeholder="john@example.com">
             </div>
             <div class="form-group">
-              <label for="customer-phone">Phone Number:</label>
-              <input type="tel" id="customer-phone" name="phone" required>
+              <label for="customer-phone">Phone Number</label>
+              <input type="tel" id="customer-phone" name="phone" required
+                     placeholder="+91 98765 43210" pattern="[0-9+\-\s]+">
             </div>
           </form>
         `,
+        customClass: {
+          popup: 'customer-details-modal',
+          title: 'customer-details-title',
+          confirmButton: 'customer-details-confirm',
+          cancelButton: 'customer-details-cancel',
+          closeButton: 'swal2-close-hide'  // Hide close button
+        },
+        showCloseButton: false,  // Explicitly hide close button
+        allowOutsideClick: false,  // Prevent closing by clicking outside
+        allowEscapeKey: false,    // Prevent closing with ESC key
+        backdrop: 'static',       // Prevent closing when clicking backdrop
         showCancelButton: true,
         confirmButtonText: 'Submit Trip',
         cancelButtonText: 'Cancel',
@@ -159,156 +185,39 @@ const showFinalCompletion = () => {
         if (result.value) {
           Swal.fire({
             title: 'Success!',
-            text: 'Trip submitted successfully!',
+            text: 'Your trip has been submitted successfully',
             icon: 'success',
-            confirmButtonText: 'OK'
+            customClass: {
+              popup: 'success-modal',
+              title: 'success-title',
+              confirmButton: 'success-confirm',
+              icon: 'success-icon',
+              closeButton: 'swal2-close-hide'  // Hide close button
+            },
+            confirmButtonText: 'Great!',
+            buttonsStyling: false,
+            showConfirmButton: true,
+            showCloseButton: false,  // Explicitly hide close button
+            allowOutsideClick: false,  // Prevent closing by clicking outside
+            allowEscapeKey: false,    // Prevent closing with ESC key
+            backdrop: 'static',       // Prevent closing when clicking backdrop
+            didOpen: () => {
+              // Add click handler to the confirm button
+              const confirmButton = document.querySelector('.swal2-confirm');
+              if (confirmButton) {
+                confirmButton.addEventListener('click', () => {
+                  // Refresh the page
+                  window.location.reload();
+                });
+              }
+            }
           });
         }
       });
     }
   });
+}
 
-  // Add styles
-  const styleEl = document.createElement('style');
-  styleEl.textContent = `
-    .trip-summary {
-      display: grid;
-      gap: 1.5rem;
-      padding: 1.5rem;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .summary-section {
-      background: #f8f9fa;
-      padding: 1.25rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .summary-section h3 {
-      margin: 0 0 1.25rem 0;
-      color: #2c3e50;
-      font-size: 1.25rem;
-    }
-    
-    .summary-section p {
-      margin: 0.75rem 0;
-      color: #666;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-    
-    .summary-section strong {
-      color: #2c3e50;
-      font-weight: 600;
-    }
-    
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 0.75rem;
-      font-size: 0.95rem;
-      color: #333;
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-    }
-    
-    .form-group input:focus {
-      outline: none;
-      border-color: #2c3e50;
-      box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
-    }
-    
-    /* SweetAlert container styles */
-    .swal2-container {
-      z-index: 10000 !important;
-    }
-    
-    .swal2-popup {
-      width: 90% !important;
-      max-width: 500px !important;
-      border-radius: 16px !important;
-      padding: 1.5rem !important;
-    }
-    
-    .swal2-title {
-      font-size: 1.5rem !important;
-      color: #2c3e50 !important;
-      margin-bottom: 1.25rem !important;
-    }
-    
-    .swal2-html-container {
-      font-size: 1rem !important;
-      color: #333 !important;
-    }
-    
-    .swal2-confirm, .swal2-cancel {
-      padding: 0.75rem 1.5rem !important;
-      font-size: 1rem !important;
-      border-radius: 8px !important;
-      min-height: auto !important;
-    }
-    
-    .swal2-confirm {
-      background-color: #2c3e50 !important;
-      color: white !important;
-    }
-    
-    .swal2-cancel {
-      background-color: #e9ecef !important;
-      color: #333 !important;
-    }
-    
-    /* Mobile-specific styles */
-    @media (max-width: 768px) {
-      .trip-summary {
-        padding: 1rem;
-      }
-      
-      .summary-section {
-        padding: 1rem;
-      }
-      
-      .summary-section h3 {
-        font-size: 1.15rem;
-      }
-      
-      .summary-section p {
-        font-size: 0.9rem;
-      }
-      
-      .form-group input {
-        font-size: 0.95rem;
-        padding: 0.65rem;
-      }
-      
-      .swal2-popup {
-        width: 95% !important;
-        padding: 1.25rem !important;
-      }
-      
-      .swal2-title {
-        font-size: 1.3rem !important;
-      }
-      
-      .swal2-confirm, .swal2-cancel {
-        padding: 0.65rem 1.25rem !important;
-      }
-    }
-  `;
-  document.head.appendChild(styleEl);
-};
 
 // Final options (to be called after add-ons submission)
 export const renderFinalOptions = () => {

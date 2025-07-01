@@ -41,8 +41,8 @@ const getModalConfig = (destination, activitiesHTML, accommodationHTML) => ({
       </div>
       
       <!-- Duration Section -->
-      <div class="modal__section">
-        <h4>Duration</h4>
+      <div class="modal__section days">
+        <h4>Duration (in days)</h4>
         <input type="number" id="duration" min="1" max="14" value="3" required>
       </div>
       
@@ -72,34 +72,71 @@ const getModalConfig = (destination, activitiesHTML, accommodationHTML) => ({
   `,
   width: '1000px',
   showConfirmButton: false,
-  showCloseButton: true
+  showCloseButton: true,
+  didOpen: (modalInstance) => {
+    setupModalHandlers(modalInstance, destination);
+  
+    // Remove any anchor wrappers from activity images
+    modalInstance.querySelectorAll('.activity-image').forEach(img => {
+      const wrapper = img.closest('a[data-gallery="activities"]');
+      if (wrapper) {
+        wrapper.parentNode.insertBefore(img, wrapper);
+        wrapper.remove();
+      }
+      // Add click handler for custom zoom
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showCustomZoom(img.src, img.alt);
+      });
+    });
+
+    // Custom zoom overlay logic
+    function showCustomZoom(src, alt) {
+      // Remove any existing overlay
+      document.querySelectorAll('.custom-zoom-overlay').forEach(el => el.remove());
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'custom-zoom-overlay';
+      overlay.tabIndex = 0;
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML = `
+        <div class="custom-zoom-inner">
+          <img src="${src}" alt="${alt || ''}" class="custom-zoom-img" />
+          <button class="custom-zoom-close" aria-label="Close zoomed image">&times;</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      // Focus for accessibility
+      overlay.focus();
+      // Close on overlay or close button click
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || e.target.classList.contains('custom-zoom-close')) {
+          overlay.remove();
+        }
+      });
+      // Close on Escape key
+      overlay.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') overlay.remove();
+      });
+    }
+  },
 });
 
 
 // Function to handle activity selection
 const handleActivitySelection = (modalInstance, destination) => {
   const activityCards = modalInstance.querySelectorAll('.activity-card');
-  
+
   activityCards.forEach(card => {
     const activityId = card.dataset.id;
     const activity = destination.activities.find(a => a.id === activityId);
-    
-    // Handle card click
-    card.addEventListener('click', (e) => {
-      // Prevent click if the button was clicked
-      if (e.target.classList.contains('select-btn')) {
-        return;
-      }
-      
-      // Toggle selection
-      activity.selected = !activity.selected;
-      updateActivityUI(card, activity);
-    });
 
-    // Handle button click
+    // Only handle selection on select button
     const selectBtn = card.querySelector('.select-btn');
-    selectBtn.addEventListener('click', () => {
-      // Toggle selection
+    selectBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent bubbling to card or image
       activity.selected = !activity.selected;
       updateActivityUI(card, activity);
     });
@@ -177,13 +214,7 @@ export const openDestinationModal = (destination) => {
   // Create modal
   const modalPromise = Swal.fire(getModalConfig(destination, activitiesHTML, accommodationHTML));
   
-  // Wait for modal to be fully rendered before adding handlers
-  setTimeout(() => {
-    const modalInstance = Swal.getPopup();
-    if (modalInstance) {
-      setupModalHandlers(modalInstance, destination);
-    }
-  }, 100); // Small delay to ensure modal is rendered
+  // Handlers are now set up in the didOpen callback of the modal config.
   
   // Handle save result
   return modalPromise.then((result) => {

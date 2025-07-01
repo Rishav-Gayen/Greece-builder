@@ -115,18 +115,20 @@ const generateSummaryCard = (item, index) => {
         </div>
       </div>
 
-      ${isInitialDestinationPhase ? `
-        <!-- Show delete button ONLY in initial destination selection -->
-        <button class="summary-card__remove" data-index="${index}">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      ` : `
-        <!-- Show info button for flight preferences AND all subsequent phases -->
-        <button class="summary-card__info" data-index="${index}">
-          <i class="fa-solid fa-info"></i>
-        </button>
-      `}
-    </div>
+      <!-- Always show info button -->
+<div class="summary-card__actions">
+  <button class="summary-card__info" data-index="${index}">
+    <i class="fa-solid fa-info"></i>
+  </button>
+
+  ${isInitialDestinationPhase ? `
+    <!-- Show delete button ONLY in initial destination selection -->
+    <button class="summary-card__remove" data-index="${index}">
+      <i class="fa-solid fa-trash"></i>
+    </button>
+  ` : ''}
+</div>
+</div>
   `;
 };
 
@@ -217,29 +219,48 @@ const setupCardInteractions = () => {
 
   // Info button - all other phases
   document.querySelectorAll('.summary-card__info').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
       const index = parseInt(btn.dataset.index);
       const destination = getItinerary()[index];
       
-      Swal.fire({
-        title: `${destination.destination.name} Details`,
-        html: `
-          <div class="destination-details">
-            <p><strong>Duration:</strong> ${destination.tripDetails.duration} days</p>
-            <p><strong>Accommodation:</strong> ${destination.tripDetails.accommodation}</p>
-            <div class="full-activities">
-              <h4>All Activities (${destination.tripDetails.activities.length}):</h4>
-              <ul>
-                ${destination.tripDetails.activities.map(a => `<li>${a}</li>`).join('')}
-              </ul>
-            </div>
+      // Create modal content
+      const modalContent = `
+        <div class="destination-details">
+          <p><strong>Duration:</strong> ${destination.tripDetails.duration} days</p>
+          <p><strong>Accommodation:</strong> ${destination.tripDetails.accommodation}</p>
+          <div class="full-activities">
+            <h4>All Activities (${destination.tripDetails.activities.length}):</h4>
+            <ul>
+              ${destination.tripDetails.activities.map(a => `<li>${a}</li>`).join('')}
+            </ul>
           </div>
-        `,
-        confirmButtonText: 'Close',
+        </div>
+      `;
+      
+      // Show the modal
+      await Swal.fire({
+        title: `${destination.destination.name} Details`,
+        html: modalContent,
+        showConfirmButton: true,
+        confirmButtonText: 'Ok',
         customClass: {
           popup: 'destination-details-modal',
           title: 'destination-details-title',
           confirmButton: 'destination-details-confirm'
+        },
+        showCloseButton: false,
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        buttonsStyling: false,
+        didOpen: (modal) => {
+          // Ensure the modal is properly initialized
+          const confirmBtn = modal.querySelector('.swal2-confirm');
+          if (confirmBtn) {
+            confirmBtn.onclick = () => Swal.close();
+          }
         }
       });
     });
@@ -267,8 +288,6 @@ export const updateItinerarySummary = () => {
   // Generate Content
   summaryContent.innerHTML = `
     ${itinerary.map((item, index) => generateSummaryCard(item, index)).join('')}
-
-    
 
     <!-- Flight Summary Section -->
     ${flightPrefs.departureCity ? `

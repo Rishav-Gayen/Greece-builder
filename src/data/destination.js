@@ -104,28 +104,145 @@ export const destinations = [
       idealFor: ['romance', 'photography']
     }
   },
+
   {
-    id: 'rhodes',
-    name: 'Rhodes',
-    imageUrl: 'https://i.pinimg.com/originals/db/07/9e/db079e96961cd743f56aded25d503a15.jpg',
-    shortDesc: 'The city of Knights',
+    id: 'mykonos',
+    name: 'Mykonos',
+    imageUrl: 'https://www.kivotoshotels.com/wp-content/uploads/2021/10/mykonos-sunset-scaled.jpg',
+    shortDesc: 'The island of the winds',
     activities: [
       {
-        id: 'lindos',
-        name: 'Lindos Acropolis',
-        imageUrl: 'http://www.greekboston.com/wp-content/uploads/2017/04/Acropolis-of-Lindos.jpg',
+        id: 'delos',
+        name: 'Trip to delos archaeological site',
+        imageUrl: 'https://thumbs.dreamstime.com/b/walkway-amongst-ancient-remains-archaeological-site-delos-delos-island-greece-mykonos-91904544.jpg',
+        selected: false
+      },
+      {
+        id: 'windmills',
+        name: 'Guided sightseeing tour with windmills',
+        imageUrl: 'https://visitourgreece.com/wp-content/uploads/2021/10/Mykonos-Windmills-Sunset-scaled.jpg',
+        selected: false
+      },
+      {
+        id: 'wine',
+        name: 'Winery experience with food and wine tasting',
+        imageUrl: 'https://cdn.getyourguide.com/img/tour/673f0b549f700074405e90ccbd9c8b57631f7edb728ef06e8a24b65e926a5451.jpg/146.jpg',
+        selected: false
+      }
+    ],
+    accommodationOptions: [
+      'Accomodation (3 Star)',
+      'Accomodation (4 Star)',
+      'Accomodation (5 Star)',
+      'Seafacing Villa',
+      'Airbnb'
+    ],
+    metadata: {
+      region: 'Dodecanese',
+      popular: false,
+      idealFor: ['history', 'beaches']
+    }
+  },
+
+  {
+    id: 'crete',
+    name: 'Crete',
+    imageUrl: 'https://handluggageonly.co.uk/wp-content/uploads/2018/01/Hand-Luggage-Only-11-8.jpg',
+    shortDesc: "Greece's largest island",
+    activities: [
+      {
+        id: 'knossos',
+        name: 'Knossos Guided Trip',
+        imageUrl: 'https://cdn.getyourguide.com/img/tour/5f0b314a37a75.jpeg/146.jpg',
+        selected: false
+      },
+      {
+        id: 'heraklion',
+        name: 'Crete heraklion day trip',
+        imageUrl: 'https://cdn.getyourguide.com/img/tour/5f0b314a37a75.jpeg/146.jpg',
         selected: false
       },
       {
         id: 'old-town',
-        name: 'Old Town walking tour with guide',
-        imageUrl: 'https://www.discovergreece.com/sites/default/files/2021-02/the_palace_of_the_grand_master.jpg',
+        name: 'Old town guided tour with street food',
+        imageUrl: 'https://thumbs.dreamstime.com/b/no-shortage-souvenir-shops-old-town-rethymno-crete-greece-no-shortage-souvenir-shops-old-town-rethymno-260789445.jpg',
+        selected: false
+      }
+    ],
+    accommodationOptions: [
+      'Accomodation (3 Star)',
+      'Accomodation (4 Star)',
+      'Accomodation (5 Star)',
+      'Seafacing Villa',
+      'Airbnb'
+    ],
+    metadata: {
+      region: 'Dodecanese',
+      popular: false,
+      idealFor: ['history', 'beaches']
+    }
+  },
+
+  {
+    id: 'paros',
+    name: 'Paros',
+    imageUrl: 'https://www.ferryguy.com/wp-content/uploads/2019/10/Paros-Parikia1920x1280-1.jpg',
+    shortDesc: "Greece's largest island",
+    activities: [
+      {
+        id: 'boat',
+        name: 'Paros Anti Paros boat trip with lunch and drinks',
+        imageUrl: 'https://windmill-travel.gr/wp-content/uploads/2019/10/DSC_9669.jpg',
         selected: false
       },
       {
-        id: 'medieval',
-        name: 'Explore the new medieval city',
-        imageUrl: 'https://tse4.mm.bing.net/th?id=OIP.n8NWGHX9otbadXfEebJeywHaE7&pid=Api&P=0&h=180',
+        id: 'snorkelling',
+        name: 'Paros bay boat trip with snorkelling',
+        imageUrl: 'https://www.parosvoyages.gr/wp-content/uploads/2022/01/snorkeling-paros.jpg',
+        selected: false
+      },
+      {
+        id: 'sunset_paros',
+        name: 'Sunset Tour',
+        imageUrl: 'https://media.manawa.com/cache/activity_gallery_zoom_770x500/media/2023/08/fd56b6a0cfd3c099f9d29a18b08f8153.png',
+        selected: false
+      }
+    ],
+    accommodationOptions: [
+      'Accomodation (3 Star)',
+      'Accomodation (4 Star)',
+      'Accomodation (5 Star)',
+      'Seafacing Villa',
+      'Airbnb'
+    ],
+    metadata: {
+      region: 'Dodecanese',
+      popular: false,
+      idealFor: ['history', 'beaches']
+    }
+  },
+  {
+    id: 'rhodes',
+    name: 'Rhodes',
+    imageUrl: 'https://i.pinimg.com/originals/db/07/9e/db079e96961cd743f56aded25d503a15.jpg',
+    shortDesc: "The city of knights",
+    activities: [
+      {
+        id: 'lindos',
+        name: 'Lindos Acropolis',
+        imageUrl: 'https://visitourgreece.com/wp-content/uploads/2021/09/Lindos-Acropolis-1-scaled.jpg',
+        selected: false
+      },
+      {
+        id: 'old_town',
+        name: 'Old town walking tour with guide',
+        imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.R3UIi7E5z6p45c0DQJbhPgHaEo?pid=Api&P=0&h=180',
+        selected: false
+      },
+      {
+        id: 'city',
+        name: 'Explore the new and medieval city',
+        imageUrl: 'https://uniquedestination.mitsishotels.com/wp-content/uploads/2022/09/shutterstock_2144547169-1024x688.jpg',
         selected: false
       }
     ],
