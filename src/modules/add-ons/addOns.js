@@ -1,6 +1,7 @@
 import { setAddOns, getAddOns, getBuilderPhase } from '../../utils/state.js';
 import { getItinerary, getFlightPreferences } from '../../utils/state.js';
 import { calculateTotalBudget } from '../../utils/budget.js';
+import { saveTripToSheety, getTripsFromSheety } from './sheety.js';
 
 // Add-ons configuration
 const ADDONS_CONFIG = [
@@ -77,7 +78,6 @@ export const setupAddOnsForm = () => {
   });
 };
 
-// Add this new function to handle final completion
 const showFinalCompletion = () => {
   // First show trip summary
   const tripData = {
@@ -159,64 +159,79 @@ const showFinalCompletion = () => {
         showCancelButton: true,
         confirmButtonText: 'Submit Trip',
         cancelButtonText: 'Cancel',
-        preConfirm: () => {
+        preConfirm: async () => {
           const form = Swal.getPopup().querySelector('#customer-details-form');
-          const customerData = {
-            name: form.name.value,
-            email: form.email.value,
-            phone: form.phone.value,
-            trip: tripData
-          };
+          const submitBtn = Swal.getConfirmButton();
           
-          // Log complete trip data
-          console.log('Complete Trip Submission:', {
-            customer: {
-              name: customerData.name,
-              email: customerData.email,
-              phone: customerData.phone
-            },
-            ...tripData,
-            createdAt: new Date().toISOString()
-          });
+          // Show loading state
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `Submitting <span class="loading-spinner"></span>`;
           
-          return customerData;
+          try {
+            const customerData = {
+              name: form.name.value,
+              email: form.email.value,
+              phone: form.phone.value
+            };
+
+            await saveTripToSheety(tripData, customerData);
+            const recentTrips = await getTripsFromSheety({
+              'customer-email': customerData.email,
+              '_sort': 'timestamp',
+              '_order': 'desc',
+              '_limit': 3
+            });
+            
+            return {
+              customer: customerData,
+              recentTrips: recentTrips
+            };
+          } catch (error) {
+            Swal.showValidationMessage(`Save failed: ${error.message}`);
+            return false;
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Trip';
+          }
         }
       }).then((result) => {
-        if (result.value) {
+        if (result.isConfirmed) {
+          const tripCount = result.value.recentTrips?.length || 1;
+          
           Swal.fire({
             title: 'Success!',
-            text: 'Your trip has been submitted successfully',
+            html: `
+              <div class="booking-success">
+                <p>Your trip has been sent successfully.</p>
+              </div>
+            `,
             icon: 'success',
             customClass: {
               popup: 'success-modal',
               title: 'success-title',
               confirmButton: 'success-confirm',
               icon: 'success-icon',
-              closeButton: 'swal2-close-hide'  // Hide close button
+              closeButton: 'swal2-close-hide'
             },
             confirmButtonText: 'Great!',
             buttonsStyling: false,
             showConfirmButton: true,
-            showCloseButton: false,  // Explicitly hide close button
-            allowOutsideClick: false,  // Prevent closing by clicking outside
-            allowEscapeKey: false,    // Prevent closing with ESC key
-            backdrop: 'static',       // Prevent closing when clicking backdrop
-            didOpen: () => {
-              // Add click handler to the confirm button
-              const confirmButton = document.querySelector('.swal2-confirm');
-              if (confirmButton) {
-                confirmButton.addEventListener('click', () => {
-                  // Refresh the page
-                  window.location.reload();
-                });
-              }
+            showCloseButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            backdrop: 'static',
+            willClose: () => {
+              document.dispatchEvent(new CustomEvent('bookingComplete', {
+                detail: result.value
+              }));
+              window.location.reload();
             }
           });
         }
       });
     }
   });
-}
+};
 
 
 // Final options (to be called after add-ons submission)
