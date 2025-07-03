@@ -202,7 +202,9 @@ const showFinalCompletion = () => {
             title: 'Success!',
             html: `
               <div class="booking-success">
-                <p>Your trip has been sent successfully.</p>
+                <p>Your trip has been saved successfully.</p>
+                ${tripCount > 1 ? 
+                  `<p class="trip-count">You have saved trip with us.</p>` : ''}
               </div>
             `,
             icon: 'success',

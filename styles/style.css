@@ -1509,3 +1509,18 @@ button#continue-summary:hover {
   box-shadow: 0 1px 4px rgba(40, 167, 69, 0.3) !important;
 }
 
+/* Add to existing styles */
+.required {
+  color: #e53935;
+}
+
+.error-input {
+  border-color: #e53935 !important;
+}
+
+.error-message {
+  color: #e53935;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
