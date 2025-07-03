@@ -224,7 +224,7 @@ const showFinalCompletion = () => {
               document.dispatchEvent(new CustomEvent('bookingComplete', {
                 detail: result.value
               }));
-              window.top.location.href = 'https://bonhomiee-landing.netlify.app';
+              window.top.location.href = 'https://creatorapp.zoho.in/bonhomieeodyssey/bonhomiee-odyssey/#Page:Custom_Packages';
             }
           });
         }
