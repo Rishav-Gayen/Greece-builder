@@ -102,24 +102,63 @@ export const setupFlightForm = () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault(); // Prevent page refresh
     
+    // Get form values
+    const departureCity = form.querySelector('#departure-city').value.trim();
+    const departureDate = form.querySelector('#departure-date').value;
+    const departureTime = form.querySelector('input[name="departure-time"]:checked')?.value;
+    const travelClass = form.querySelector('#travel-class').value;
+    
+    // Validate required fields
+    const errors = [];
+    if (!departureCity) errors.push('Please enter a departure city');
+    if (!departureDate) errors.push('Please select a departure date');
+    if (!departureTime) errors.push('Please select a preferred time window');
+    if (!travelClass) errors.push('Please select a travel class');
+    
+    if (errors.length > 0) {
+      // Show error message
+      Swal.fire({
+        title: 'Incomplete Form',
+        html: `Please fill in all required fields:<br><br>• ${errors.join('<br>• ')}`,
+        icon: 'error',
+        confirmButtonText: 'Got it!',
+        confirmButtonColor: '#00afef',
+        customClass: {
+          confirmButton: 'swal2-confirm'
+        }
+      });
+      return;
+    }
+    
     const formData = {
-      departureCity: form.querySelector('#departure-city').value,
-      departureDate: form.querySelector('#departure-date').value,
-      departureTime: form.querySelector('input[name="departure-time"]:checked')?.value,
-      travelClass: form.querySelector('#travel-class').value,
+      departureCity,
+      departureDate,
+      departureTime,
+      travelClass,
       dietaryPreferences: Array.from(
         form.querySelectorAll('input[name="dietary-prefs"]:checked')
       ).map(el => el.value)
     };
 
-    // Save the flight preferences
-    saveFlightPreferences(formData);
-    
-    // Update the summary to show flight info
-    updateItinerarySummary();
-    
-    // Show confirmation
-    showSaveConfirmation();
+    try {
+      // Save the flight preferences
+      saveFlightPreferences(formData);
+      
+      // Update the summary to show flight info
+      updateItinerarySummary();
+      
+      // Show confirmation
+      showSaveConfirmation();
+    } catch (error) {
+      console.error('Error saving flight preferences:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'There was an error saving your preferences. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#00afef'
+      });
+    }
   });
 
   // Optional: Auto-save on changes

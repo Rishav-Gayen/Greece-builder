@@ -28,7 +28,7 @@ export const renderAddOnsForm = () => {
   
   return `
     <div class="addons-form-container">
-      <h2>Select Add-Ons</h2>
+      <h2>Select Add-Ons (Optional)</h2>
       <form id="addons-form" class="addons-form">
         <div class="addons-grid">
           ${ADDONS_CONFIG.map(addon => `
@@ -202,9 +202,7 @@ const showFinalCompletion = () => {
             title: 'Success!',
             html: `
               <div class="booking-success">
-                <p>Your trip has been saved successfully.</p>
-                ${tripCount > 1 ? 
-                  `<p class="trip-count">You have saved trip with us.</p>` : ''}
+                <p>Your trip has been sent to travel desk successfully.</p>
               </div>
             `,
             icon: 'success',
@@ -226,7 +224,7 @@ const showFinalCompletion = () => {
               document.dispatchEvent(new CustomEvent('bookingComplete', {
                 detail: result.value
               }));
-              window.top.location.href = 'https://creatorapp.zoho.in/bonhomieeodyssey/bonhomiee-odyssey/#Page:Travel_Redirection';
+              window.location.reload();
             }
           });
         }

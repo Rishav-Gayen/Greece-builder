@@ -142,7 +142,7 @@ const renderBudgetSummary = (itinerary) => {
   const totalDays = itinerary.reduce((sum, item) => sum + item.tripDetails.duration, 0);
 
   budgetSummary.innerHTML = `
-    <h3>Budget Estimate</h3>
+    <h3>Budget Estimate (including flights)</h3>
     <p><strong>Total Days:</strong> ${totalDays}</p>
     <p><strong>Estimated Cost:</strong> ₹${totalBudget.toLocaleString('en-IN')}</p>
   `;
@@ -180,6 +180,14 @@ const formatTravelClass = (cls) => {
   return classMap[cls] || cls;
 };
 
+// Smooth scroll helper function
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
+
 const handleItinerarySubmit = () => {
   const itinerary = getItinerary();
   const flightPrefs = getFlightPreferences();
@@ -199,13 +207,15 @@ const handleItinerarySubmit = () => {
   showDestinationAdded(itinerary[0]);
   document.getElementById('destinations-selection').innerHTML = renderFlightForm();
   setupFlightForm();
-  updateItinerarySummary(); // Refresh to show flight form
+  updateItinerarySummary();
+  scrollToTop(); // Scroll to top after form update
 };
 
 const handleCompleteTripSubmit = () => {
   // Just transition to add-ons, don't show completion alert yet
   document.getElementById('itinerary-form').innerHTML = renderAddOnsForm();
   setupAddOnsForm();
+  scrollToTop(); // Scroll to top after form update
 };
 
 const setupCardInteractions = () => {
@@ -274,7 +284,7 @@ const getCurrentStage = () => {
   return 'destinations';
 };
 
-export const updateItinerarySummary = () => {
+export function updateItinerarySummary() {
   const itinerary = getItinerary();
   const flightPrefs = getFlightPreferences();
 
@@ -286,6 +296,12 @@ export const updateItinerarySummary = () => {
   }
 
   // Generate Content
+
+  // Add Event Listeners
+  
+  // Update Budget
+  
+
   summaryContent.innerHTML = `
     ${itinerary.map((item, index) => generateSummaryCard(item, index)).join('')}
 
@@ -319,17 +335,13 @@ export const updateItinerarySummary = () => {
     </div>
   `;
 
-  // Add Event Listeners
+  setupCardInteractions();
+  renderBudgetSummary(itinerary);
+
   setupRemoveHandlers();
   document.getElementById('submit-itinerary')?.addEventListener('click', handleItinerarySubmit);
   document.getElementById('submit-complete-trip')?.addEventListener('click', handleCompleteTripSubmit);
 
-  // Update Budget
-  setupCardInteractions(); // <-- ADD THIS LINE
-  renderBudgetSummary(itinerary);
-};
-
-
-
+}
 
 document.addEventListener('itineraryUpdated', updateItinerarySummary);
