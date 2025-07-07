@@ -60,26 +60,29 @@ export const saveTripToSheety = async (tripData, customerData) => {
   }).join(', ');
 
 
-const payload = {
-  [SHEETY_CONFIG.SHEET_NAME]: {
-    
-    'customername': customerData.name,
-    'customeremail': customerData.email,
-    'customerphone': customerData.phone,
-    'departurecity': tripData.flights.departureCity,
-    'departuredate': tripData.flights.departureDate,
-    'departuretime': tripData.flights.departureTime,
-    'travelclass': tripData.flights.travelClass,
-    'dietarypreferences': tripData.flights.dietaryPreferences?.join(', ') || '',
-    'country': country,
-    'destinations': tripData.destinations.map(d => d.destination.name).join(', '),
-    'activities': selectedActivities, // Added this line to include activities
-    'totaldays': tripData.summary.totalDays,
-    'estimatedcost': tripData.summary.estimatedCost,
-    'addons': Object.entries(tripData.addOns || {})
-      .filter(([_, val]) => val)
-      .map(([key]) => key)
-      .join(', '),
+// Generate a unique request ID (timestamp + random string)
+  const requestId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  const payload = {
+    [SHEETY_CONFIG.SHEET_NAME]: {
+      'requestid': requestId,
+      'customername': customerData.name,
+      'customeremail': customerData.email,
+      'customerphone': customerData.phone,
+      'departurecity': tripData.flights.departureCity,
+      'departuredate': tripData.flights.departureDate,
+      'departuretime': tripData.flights.departureTime,
+      'travelclass': tripData.flights.travelClass,
+      'dietarypreferences': tripData.flights.dietaryPreferences?.join(', ') || '',
+      'country': country,
+      'destinations': tripData.destinations.map(d => d.destination.name).join(', '),
+      'activities': selectedActivities,
+      'totaldays': tripData.summary.totalDays,
+      'estimatedcost': tripData.summary.estimatedCost,
+      'addons': Object.entries(tripData.addOns || {})
+        .filter(([_, val]) => val)
+        .map(([key]) => key)
+        .join(', '),
        'timestamp': timestampData.iso,
       'date': timestampData.date,
       'time': timestampData.time,
