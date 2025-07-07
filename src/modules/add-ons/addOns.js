@@ -224,7 +224,7 @@ const showFinalCompletion = () => {
               document.dispatchEvent(new CustomEvent('bookingComplete', {
                 detail: result.value
               }));
-              window.location.reload();
+              window.top.location.href = 'https://bonhomieeodyssey.zohocreatorportal.in/#Page:Custom_Packages';
             }
           });
         }
