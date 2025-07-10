@@ -73,7 +73,7 @@ export const renderFlightForm = () => {
       <div class="form-group">
         <label>Dietary Preferences</label>
         <div class="checkbox-group">
-          ${['vegetarian', 'vegan', 'gluten-free', 'halal', 'kosher'].map(pref => `
+          ${['vegetarian', 'non-vegetarian', 'no-preferences'].map(pref => `
             <label>
               <input type="checkbox" name="dietary-prefs" 
                      value="${pref}"
