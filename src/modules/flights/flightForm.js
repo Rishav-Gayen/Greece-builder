@@ -73,7 +73,7 @@ export const renderFlightForm = () => {
       <div class="form-group">
         <label>Dietary Preferences</label>
         <div class="checkbox-group">
-          ${['vegetarian', 'non-vegetarian', 'no-preferences'].map(pref => `
+          ${['Vegetarian', 'Non Vegetarian', 'No Preferences'].map(pref => `
             <label>
               <input type="checkbox" name="dietary-prefs" 
                      value="${pref}"
@@ -104,6 +104,21 @@ export const setupFlightForm = () => {
     const today = new Date().toISOString().split('T')[0];
     departureDateInput.setAttribute('min', today);
   }
+
+  // Set up single-select behavior for dietary preferences
+  const dietaryCheckboxes = form.querySelectorAll('input[name="dietary-prefs"]');
+  dietaryCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        // Uncheck all other dietary preference checkboxes
+        dietaryCheckboxes.forEach(otherCheckbox => {
+          if (otherCheckbox !== e.target) {
+            otherCheckbox.checked = false;
+          }
+        });
+      }
+    });
+  });
 
   const getFormData = () => {
     return {
@@ -178,7 +193,6 @@ export const setupFlightForm = () => {
     }
   }, 300));
 };
-
 // Temporary add-ons placeholder until you create the actual module
 
 // Save Confirmation

@@ -43,7 +43,7 @@ const getModalConfig = (destination, activitiesHTML, accommodationHTML) => ({
       <!-- Duration Section -->
       <div class="modal__section days">
         <h4>Duration (in days)</h4>
-        <input type="number" id="duration" min="1" max="14" value="3" required>
+        <input type="number" id="duration" min="3" max="5" value="3" required>
       </div>
       
       <!-- Activities Section -->
@@ -203,6 +203,9 @@ const setupModalHandlers = (modalInstance, destination) => {
       e.target.classList.remove('error');
     }
   });
+
+
+  document.getElementById('itinerary-summary').scrollIntoView({ behavior: 'smooth' });
 };
 
 
